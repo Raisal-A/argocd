@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: example-applicationset
+spec:
+  generators:
+    - git:
+        repoURL: 'https://github.com/Raisal-A/my-repo'
+        revision: master
+        directories:
+          - path: 'apps/*'
+  template:
+    metadata:
+      name: '{{path.basename}}'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://github.com/Raisal-A/my-repo'
+        targetRevision: master
+        path: '{{path.relative}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: default
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
